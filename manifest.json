@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Star Recorder",
+  "description": "Star Recorder captures a tab, window, or screen as a WebM video.",
+  "version": "1.0.0",
+  "permissions": [
+    "desktopCapture"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Star Recorder"
+  }
+}

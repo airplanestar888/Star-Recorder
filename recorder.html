@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Star Recorder</title>
+    <link rel="stylesheet" href="recorder.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <h1>Star Recorder</h1>
+          <p id="statusText">Choose a capture source to start.</p>
+        </div>
+        <div class="actions">
+          <button id="sourceButton" type="button">Choose Source</button>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="Recorder">
+        <aside class="panel settingsPanel">
+          <h2>Settings</h2>
+          <label>
+            Max FPS
+            <input id="fpsInput" type="number" min="5" max="60" value="30">
+          </label>
+          <label>
+            Max width
+            <input id="widthInput" type="number" min="640" max="3840" step="10" value="1920">
+          </label>
+          <label>
+            Max height
+            <input id="heightInput" type="number" min="360" max="2160" step="10" value="1080">
+          </label>
+          <label class="checkLabel">
+            <input id="audioInput" type="checkbox" checked>
+            Record audio when available
+          </label>
+          <p id="audioHint" class="hintText">
+            For X Spaces, choose the Chrome Tab source and enable tab audio in the share dialog.
+          </p>
+          <button id="resetButton" class="secondary" type="button" disabled>Reset</button>
+        </aside>
+
+        <section class="stageWrap">
+          <div id="previewShell" class="previewShell">
+            <video id="previewVideo" autoplay muted playsinline></video>
+            <div id="emptyState" class="emptyState">
+              <strong>No source selected</strong>
+              <span>Click Choose Source, then pick the tab or window you want to record.</span>
+            </div>
+          </div>
+          <div class="recordingBar" aria-label="Recording status">
+            <div id="recordingPulse" class="recordingPulse"></div>
+          </div>
+          <nav id="transportControls" class="transportControls is-hidden" aria-label="Recording controls">
+            <button id="recordButton" type="button" disabled>Start</button>
+            <button id="pauseButton" class="warning" type="button" disabled>Pause</button>
+            <button id="stopButton" class="danger" type="button" disabled>Stop</button>
+            <button id="floatingButton" class="secondary compact" type="button" disabled>Pop Out Panel</button>
+            <a id="downloadLink" class="downloadLink is-hidden" download="star-recording.webm">Download</a>
+          </nav>
+        </section>
+
+        <aside class="panel infoPanel">
+          <div class="panelHeader">
+            <h2>Recording</h2>
+            <span id="recordingState">Ready</span>
+          </div>
+          <dl class="statsList">
+            <div>
+              <dt>Duration</dt>
+              <dd id="durationText">00:00</dd>
+            </div>
+            <div>
+              <dt>File size</dt>
+              <dd id="sizeText">0 MB</dd>
+            </div>
+            <div>
+              <dt>Stream resolution</dt>
+              <dd id="resolutionText">-</dd>
+            </div>
+            <div>
+              <dt>Audio</dt>
+              <dd id="audioText">Off</dd>
+            </div>
+            <div>
+              <dt>Audio track</dt>
+              <dd id="audioTrackText">Not selected</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <aside id="recordPanel" class="recordPanel is-hidden" aria-label="Floating recording panel">
+        <div class="recordPanelHeader">
+          <div>
+            <strong>Star Recorder</strong>
+            <small id="panelStatus">Choose a capture source to start.</small>
+          </div>
+          <span id="panelState">Ready</span>
+        </div>
+        <div class="recordPanelStats">
+          <div>
+            <span id="panelDuration">00:00</span>
+            <small>Duration</small>
+          </div>
+          <div>
+            <span id="panelSize">0 MB</span>
+            <small>File size</small>
+          </div>
+        </div>
+        <div class="recordPanelActions">
+          <button id="panelSource" type="button">Choose Source</button>
+          <button id="panelStart" type="button" disabled>Start</button>
+          <button id="panelPause" class="warning" type="button" disabled>Pause</button>
+          <button id="panelStop" class="danger" type="button" disabled>Stop</button>
+          <button id="panelPopout" class="secondary compact" type="button">Pop Out</button>
+          <button id="panelDownload" class="downloadButton is-hidden" type="button">Download</button>
+        </div>
+      </aside>
+    </main>
+    <script src="recorder.js"></script>
+  </body>
+</html>
