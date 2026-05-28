@@ -1,3 +1,7 @@
+const DEFAULT_SETTINGS = {
+  outputFormat: "mp4"
+};
+
 const state = {
   stream: null,
   recorder: null,
@@ -8,11 +12,14 @@ const state = {
   discardOnStop: false,
   timerId: 0,
   videoUrl: null,
+  recordingFormat: "webm",
+  recordingFallback: false,
   floatingWindow: null,
   panelMode: new URLSearchParams(window.location.search).get("panel") === "1"
 };
 
 const elements = {
+  optionsButton: document.getElementById("optionsButton"),
   sourceButton: document.getElementById("sourceButton"),
   recordPanel: document.getElementById("recordPanel"),
   panelState: document.getElementById("panelState"),
@@ -23,6 +30,7 @@ const elements = {
   panelStart: document.getElementById("panelStart"),
   panelPause: document.getElementById("panelPause"),
   panelStop: document.getElementById("panelStop"),
+  panelOptions: document.getElementById("panelOptions"),
   panelPopout: document.getElementById("panelPopout"),
   panelDownload: document.getElementById("panelDownload"),
   transportControls: document.getElementById("transportControls"),
@@ -75,15 +83,85 @@ function formatBytes(bytes) {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 }
 
-function getSupportedMimeType() {
-  const candidates = [
+function getStoredSettings() {
+  return new Promise((resolve) => {
+    if (typeof chrome === "undefined" || !chrome.storage || !chrome.storage.local) {
+      resolve({ ...DEFAULT_SETTINGS });
+      return;
+    }
+    chrome.storage.local.get(DEFAULT_SETTINGS, (settings) => {
+      resolve({ ...DEFAULT_SETTINGS, ...settings });
+    });
+  });
+}
+
+function getWebmMimeType() {
+  return [
     "video/webm;codecs=vp9,opus",
     "video/webm;codecs=vp8,opus",
     "video/webm;codecs=vp9",
     "video/webm;codecs=vp8",
     "video/webm"
-  ];
-  return candidates.find((type) => MediaRecorder.isTypeSupported(type)) || "";
+  ].find((type) => MediaRecorder.isTypeSupported(type)) || "";
+}
+
+function getMp4MimeType() {
+  return [
+    "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+    "video/mp4;codecs=avc1.4D401E,mp4a.40.2",
+    "video/mp4;codecs=h264,aac",
+    "video/mp4;codecs=avc1",
+    "video/mp4"
+  ].find((type) => MediaRecorder.isTypeSupported(type)) || "";
+}
+
+function getRecordingFormat(settings) {
+  const preferredFormat = settings.outputFormat === "webm" ? "webm" : "mp4";
+  const mp4MimeType = getMp4MimeType();
+  const webmMimeType = getWebmMimeType();
+
+  if (preferredFormat === "mp4" && mp4MimeType) {
+    return { mimeType: mp4MimeType, extension: "mp4", fallback: false };
+  }
+
+  if (preferredFormat === "webm" && webmMimeType) {
+    return { mimeType: webmMimeType, extension: "webm", fallback: false };
+  }
+
+  if (webmMimeType) {
+    return { mimeType: webmMimeType, extension: "webm", fallback: preferredFormat === "mp4" };
+  }
+
+  return { mimeType: "", extension: preferredFormat, fallback: false };
+}
+
+function createMediaRecorder(stream, settings) {
+  const recordingFormat = getRecordingFormat(settings);
+  const options = recordingFormat.mimeType ? { mimeType: recordingFormat.mimeType } : undefined;
+
+  try {
+    return {
+      recorder: new MediaRecorder(stream, options),
+      format: recordingFormat
+    };
+  } catch (error) {
+    const webmMimeType = getWebmMimeType();
+    if (recordingFormat.extension === "mp4" && webmMimeType) {
+      return {
+        recorder: new MediaRecorder(stream, { mimeType: webmMimeType }),
+        format: { mimeType: webmMimeType, extension: "webm", fallback: true }
+      };
+    }
+    throw error;
+  }
+}
+
+function openOptionsPage() {
+  if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.openOptionsPage) {
+    chrome.runtime.openOptionsPage();
+    return;
+  }
+  window.open("options.html", "_blank");
 }
 
 function resetVideoUrl() {
@@ -507,8 +585,20 @@ async function startRecording() {
   elements.durationText.textContent = "00:00";
   elements.sizeText.textContent = "0 MB";
 
-  const mimeType = getSupportedMimeType();
-  state.recorder = new MediaRecorder(state.stream, mimeType ? { mimeType } : undefined);
+  const settings = await getStoredSettings();
+  let recording;
+  try {
+    recording = createMediaRecorder(state.stream, settings);
+  } catch (error) {
+    setStatus(`Could not start recorder: ${error.message}`);
+    updateControls();
+    return;
+  }
+
+  const recordingFormat = recording.format;
+  state.recordingFormat = recordingFormat.extension;
+  state.recordingFallback = recordingFormat.fallback;
+  state.recorder = recording.recorder;
 
   state.recorder.addEventListener("dataavailable", (event) => {
     if (event.data.size > 0) {
@@ -521,10 +611,12 @@ async function startRecording() {
   state.recorder.start(1000);
   state.timerId = window.setInterval(updateRecordingStats, 250);
 
-  if (elements.audioInput.checked && !state.stream.getAudioTracks().length) {
+  if (state.recordingFallback) {
+    setStatus("MP4 is not supported by this Chrome build, so recording fell back to WebM.");
+  } else if (elements.audioInput.checked && !state.stream.getAudioTracks().length) {
     setStatus("Recording video only. No audio track was shared by Chrome.");
   } else {
-    setStatus("Recording browser...");
+    setStatus(`Recording ${state.recordingFormat.toUpperCase()} video...`);
   }
   updateControls();
 }
@@ -585,9 +677,10 @@ function finishRecording() {
 
   const mimeType = recorder.mimeType || "video/webm";
   const blob = new Blob(state.chunks, { type: mimeType });
+  const extension = mimeType.includes("mp4") ? "mp4" : "webm";
   state.videoUrl = URL.createObjectURL(blob);
   elements.downloadLink.href = state.videoUrl;
-  elements.downloadLink.download = `star-recording-${new Date().toISOString().replace(/[:.]/g, "-")}.webm`;
+  elements.downloadLink.download = `star-recording-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`;
   elements.downloadLink.classList.remove("is-hidden");
   stopCurrentStream();
   updateStreamStats();
@@ -632,6 +725,7 @@ function resetRecorder() {
   updateControls();
 }
 
+elements.optionsButton.addEventListener("click", openOptionsPage);
 elements.sourceButton.addEventListener("click", pickSource);
 elements.panelSource.addEventListener("click", pickSource);
 elements.recordButton.addEventListener("click", startRecording);
@@ -641,6 +735,7 @@ elements.floatingButton.addEventListener("click", openFloatingControls);
 elements.panelStart.addEventListener("click", startRecording);
 elements.panelPause.addEventListener("click", togglePauseRecording);
 elements.panelStop.addEventListener("click", stopRecording);
+elements.panelOptions.addEventListener("click", openOptionsPage);
 elements.panelPopout.addEventListener("click", openFloatingControls);
 elements.panelDownload.addEventListener("click", () => {
   if (state.videoUrl) {

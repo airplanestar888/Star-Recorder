@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Star Recorder Options</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="optionsApp">
+      <section class="settingsCard" aria-label="Recording options">
+        <header>
+          <div>
+            <h1>Star Recorder</h1>
+            <p>Recording output</p>
+          </div>
+          <span id="saveState">Saved</span>
+        </header>
+
+        <fieldset>
+          <legend>Output format</legend>
+          <label class="formatOption">
+            <input name="outputFormat" type="radio" value="mp4">
+            <span>
+              <strong>MP4 for social upload</strong>
+              <small>Best for X, Instagram, TikTok, and most editors. Falls back to WebM if Chrome cannot record MP4.</small>
+            </span>
+          </label>
+          <label class="formatOption">
+            <input name="outputFormat" type="radio" value="webm">
+            <span>
+              <strong>WebM stable recording</strong>
+              <small>Most reliable in Chrome, but some social platforms reject it.</small>
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="supportBox">
+          <div>
+            <span>MP4 support</span>
+            <strong id="mp4Support">Checking...</strong>
+          </div>
+          <div>
+            <span>WebM support</span>
+            <strong id="webmSupport">Checking...</strong>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

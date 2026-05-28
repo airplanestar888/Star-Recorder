@@ -1,6 +1,6 @@
 # Star Recorder
 
-Star Recorder is a simple Chrome extension for recording a tab, window, or screen as a WebM video.
+Star Recorder is a simple Chrome extension for recording a tab, window, or screen as a video.
 
 ## How to use
 
@@ -15,9 +15,13 @@ Star Recorder is a simple Chrome extension for recording a tab, window, or scree
 9. Use `Start`, `Pause`, `Resume`, and `Stop` from the recorder panel.
 10. Click `Download` when the video is ready.
 
+## Options
+
+Open the extension options page to choose the output format. `MP4 for social upload` is best for X and most social platforms, but Chrome support depends on the installed browser build. If MP4 recording is unavailable, Star Recorder falls back to WebM.
+
 ## Output
 
-The video downloads as a `.webm` file. Chrome supports this format directly, and it is good for quick previews. If you need MP4, convert the WebM file with a tool like FFmpeg.
+The video downloads as `.mp4` when Chrome supports MP4 recording. Otherwise, it downloads as `.webm`.
 
 Audio can be recorded when `Record audio when available` is enabled and the selected source provides audio.
 
