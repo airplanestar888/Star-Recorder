@@ -7,7 +7,7 @@ Star Recorder is a simple Chrome extension for recording a tab, window, or scree
 1. Open `chrome://extensions`.
 2. Enable `Developer mode`.
 3. Click `Load unpacked`.
-4. Select this folder: `C:\Users\bobyr\Documents\Playground\camstar`.
+4. Select the extracted or cloned `Star-Recorder` project folder.
 5. Click the `Star Recorder` extension icon.
 6. The recorder panel opens in a small popup window.
 7. Click `Choose Source`.
