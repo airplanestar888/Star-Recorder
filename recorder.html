@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Star Recorder</title>
+    <title>NovaCast</title>
     <link rel="stylesheet" href="recorder.css">
   </head>
   <body>
     <main class="app">
       <header class="topbar">
         <div>
-          <h1>Star Recorder</h1>
+          <h1>NovaCast</h1>
           <p id="statusText">Choose a capture source to start.</p>
         </div>
         <div class="actions">
@@ -90,6 +90,10 @@
               <dt>Audio track</dt>
               <dd id="audioTrackText">Not selected</dd>
             </div>
+            <div>
+              <dt>Output format</dt>
+              <dd id="formatText">-</dd>
+            </div>
           </dl>
         </aside>
       </section>
@@ -97,7 +101,7 @@
       <aside id="recordPanel" class="recordPanel is-hidden" aria-label="Floating recording panel">
         <div class="recordPanelHeader">
           <div>
-            <strong>Star Recorder</strong>
+            <strong>NovaCast</strong>
             <small id="panelStatus">Choose a capture source to start.</small>
           </div>
           <span id="panelState">Ready</span>
@@ -123,6 +127,7 @@
         </div>
       </aside>
     </main>
+    <script src="shared.js"></script>
     <script src="recorder.js"></script>
   </body>
 </html>

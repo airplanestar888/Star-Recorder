@@ -1,17 +1,46 @@
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --ink: #111827;
-  --muted: #5d6675;
-  --line: #d8dee9;
+
+  --bg: #f8fafc;
   --surface: #ffffff;
-  --field: #f8fafc;
-  --green: #126a5c;
-  --green-dark: #0f5a4e;
-  --blue: #2f5f9e;
-  --red: #b42318;
-  --red-dark: #971b12;
-  --amber: #b47805;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --field: #f1f5f9;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #e0e7ff;
+  --blue: #2563eb;
+  --red: #dc2626;
+  --red-hover: #b91c1c;
+  --amber: #d97706;
+  --warning-bg: #fef3c7;
+  --warning-border: #fde68a;
+  --info-bg: #eff6ff;
+  --info-border: #dbeafe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --ink: #f1f5f9;
+    --muted: #94a3b8;
+    --line: #334155;
+    --field: #27354f;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --accent-soft: #312e81;
+    --blue: #3b82f6;
+    --red: #ef4444;
+    --red-hover: #f87171;
+    --amber: #f59e0b;
+    --warning-bg: #451a03;
+    --warning-border: #78350f;
+    --info-bg: #172554;
+    --info-border: #1e3a8a;
+  }
 }
 
 * {
@@ -26,7 +55,7 @@ body {
 body {
   margin: 0;
   color: var(--ink);
-  background: #eef2f6;
+  background: var(--bg);
 }
 
 button,
@@ -51,11 +80,11 @@ button,
 
 button {
   color: #ffffff;
-  background: var(--green);
+  background: var(--accent);
 }
 
 button:hover {
-  background: var(--green-dark);
+  background: var(--accent-hover);
 }
 
 button:disabled {
@@ -68,7 +97,7 @@ button:disabled {
 }
 
 .danger:hover {
-  background: var(--red-dark);
+  background: var(--red-hover);
 }
 
 .warning {
@@ -83,11 +112,11 @@ button:disabled {
 .secondary {
   width: 100%;
   color: var(--ink);
-  background: #e8edf3;
+  background: var(--field);
 }
 
 .secondary:hover {
-  background: #dfe6ef;
+  background: var(--line);
 }
 
 .compact {
@@ -181,7 +210,7 @@ span {
 label {
   display: grid;
   gap: 8px;
-  color: #2d3748;
+  color: var(--ink);
   font-size: 13px;
   font-weight: 700;
 }
@@ -207,15 +236,15 @@ input[type="number"] {
   width: 18px;
   height: 18px;
   margin: 0;
-  accent-color: var(--green);
+  accent-color: var(--accent);
 }
 
 .hintText {
   padding: 10px 12px;
-  border: 1px solid #c7d7ee;
+  border: 1px solid var(--info-border);
   border-radius: 8px;
-  color: #334155;
-  background: #f2f7ff;
+  color: var(--ink);
+  background: var(--info-bg);
   font-size: 12px;
   line-height: 1.45;
 }
@@ -233,16 +262,27 @@ input[type="number"] {
   place-items: center;
   overflow: hidden;
   min-height: 420px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--line);
   border-radius: 8px;
   background:
-    linear-gradient(45deg, #dfe5ed 25%, transparent 25%),
-    linear-gradient(-45deg, #dfe5ed 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #dfe5ed 75%),
-    linear-gradient(-45deg, transparent 75%, #dfe5ed 75%);
-  background-color: #f7f9fc;
+    linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+    linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+    linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+  background-color: #e2e8f0;
   background-position: 0 0, 0 10px, 10px -10px, -10px 0;
   background-size: 20px 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .previewShell {
+    background:
+      linear-gradient(45deg, #334155 25%, transparent 25%),
+      linear-gradient(-45deg, #334155 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #334155 75%),
+      linear-gradient(-45deg, transparent 75%, #334155 75%);
+    background-color: #1e293b;
+  }
 }
 
 video {
@@ -255,7 +295,7 @@ video {
   object-fit: contain;
   border-radius: 6px;
   background: #101820;
-  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.18);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
 }
 
 .emptyState {
@@ -282,7 +322,7 @@ video {
   overflow: hidden;
   height: 8px;
   border-radius: 999px;
-  background: #dce3ec;
+  background: var(--line);
 }
 
 .recordingPulse {
@@ -299,7 +339,7 @@ video {
 
 .recordingPulse.is-paused {
   width: 100%;
-  background: #94a3b8;
+  background: var(--muted);
 }
 
 .transportControls {
@@ -327,12 +367,18 @@ video {
   gap: 14px;
   width: min(520px, calc(100vw - 28px));
   padding: 16px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
+  border: 1px solid var(--line);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 22px 60px rgba(17, 24, 39, 0.26);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.26);
   transform: translateX(-50%);
   backdrop-filter: blur(10px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .recordPanel {
+    background: rgba(30, 41, 59, 0.96);
+  }
 }
 
 .recordPanelHeader,
@@ -358,8 +404,8 @@ video {
   min-height: 26px;
   border-radius: 999px;
   padding: 0 10px;
-  color: #0f5a4e;
-  background: #dff5ef;
+  color: var(--accent-hover);
+  background: var(--accent-soft);
   font-size: 12px;
   font-weight: 800;
 }
@@ -367,7 +413,7 @@ video {
 .recordPanelHeader small {
   display: block;
   margin-top: 5px;
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.35;
 }
@@ -381,10 +427,10 @@ video {
   gap: 4px;
   min-height: 72px;
   align-content: center;
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: 10px 12px;
-  background: #f8fafc;
+  background: var(--field);
 }
 
 .recordPanelStats span {
@@ -394,7 +440,7 @@ video {
 }
 
 .recordPanelStats small {
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 750;
 }
@@ -536,7 +582,7 @@ dd {
 }
 
 .panelMode {
-  background: #e9eef5;
+  background: var(--bg);
 }
 
 .panelMode .app {
@@ -555,7 +601,7 @@ dd {
   position: static;
   align-self: start;
   width: 100%;
-  box-shadow: 0 16px 42px rgba(17, 24, 39, 0.16);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.16);
   transform: none;
 }
 

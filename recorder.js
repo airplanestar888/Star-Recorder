@@ -1,7 +1,3 @@
-const DEFAULT_SETTINGS = {
-  outputFormat: "mp4"
-};
-
 const state = {
   stream: null,
   recorder: null,
@@ -50,6 +46,7 @@ const elements = {
   resolutionText: document.getElementById("resolutionText"),
   audioText: document.getElementById("audioText"),
   audioTrackText: document.getElementById("audioTrackText"),
+  formatText: document.getElementById("formatText"),
   fpsInput: document.getElementById("fpsInput"),
   widthInput: document.getElementById("widthInput"),
   heightInput: document.getElementById("heightInput"),
@@ -81,79 +78,6 @@ function formatBytes(bytes) {
     return "0 MB";
   }
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
-}
-
-function getStoredSettings() {
-  return new Promise((resolve) => {
-    if (typeof chrome === "undefined" || !chrome.storage || !chrome.storage.local) {
-      resolve({ ...DEFAULT_SETTINGS });
-      return;
-    }
-    chrome.storage.local.get(DEFAULT_SETTINGS, (settings) => {
-      resolve({ ...DEFAULT_SETTINGS, ...settings });
-    });
-  });
-}
-
-function getWebmMimeType() {
-  return [
-    "video/webm;codecs=vp9,opus",
-    "video/webm;codecs=vp8,opus",
-    "video/webm;codecs=vp9",
-    "video/webm;codecs=vp8",
-    "video/webm"
-  ].find((type) => MediaRecorder.isTypeSupported(type)) || "";
-}
-
-function getMp4MimeType() {
-  return [
-    "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
-    "video/mp4;codecs=avc1.4D401E,mp4a.40.2",
-    "video/mp4;codecs=h264,aac",
-    "video/mp4;codecs=avc1",
-    "video/mp4"
-  ].find((type) => MediaRecorder.isTypeSupported(type)) || "";
-}
-
-function getRecordingFormat(settings) {
-  const preferredFormat = settings.outputFormat === "webm" ? "webm" : "mp4";
-  const mp4MimeType = getMp4MimeType();
-  const webmMimeType = getWebmMimeType();
-
-  if (preferredFormat === "mp4" && mp4MimeType) {
-    return { mimeType: mp4MimeType, extension: "mp4", fallback: false };
-  }
-
-  if (preferredFormat === "webm" && webmMimeType) {
-    return { mimeType: webmMimeType, extension: "webm", fallback: false };
-  }
-
-  if (webmMimeType) {
-    return { mimeType: webmMimeType, extension: "webm", fallback: preferredFormat === "mp4" };
-  }
-
-  return { mimeType: "", extension: preferredFormat, fallback: false };
-}
-
-function createMediaRecorder(stream, settings) {
-  const recordingFormat = getRecordingFormat(settings);
-  const options = recordingFormat.mimeType ? { mimeType: recordingFormat.mimeType } : undefined;
-
-  try {
-    return {
-      recorder: new MediaRecorder(stream, options),
-      format: recordingFormat
-    };
-  } catch (error) {
-    const webmMimeType = getWebmMimeType();
-    if (recordingFormat.extension === "mp4" && webmMimeType) {
-      return {
-        recorder: new MediaRecorder(stream, { mimeType: webmMimeType }),
-        format: { mimeType: webmMimeType, extension: "webm", fallback: true }
-      };
-    }
-    throw error;
-  }
 }
 
 function openOptionsPage() {
@@ -238,6 +162,7 @@ function updateStreamStats() {
     elements.resolutionText.textContent = "-";
     elements.audioText.textContent = "Off";
     elements.audioTrackText.textContent = "Not selected";
+    elements.formatText.textContent = "-";
     elements.previewVideo.style.aspectRatio = "16 / 9";
     syncFloatingControls();
     return;
@@ -255,6 +180,16 @@ function updateStreamStats() {
   if (settings.width && settings.height) {
     elements.previewVideo.style.aspectRatio = `${settings.width} / ${settings.height}`;
   }
+  syncFloatingControls();
+}
+
+function updateFormatLabel(format, fallback) {
+  if (!format) {
+    elements.formatText.textContent = "-";
+    return;
+  }
+  const label = format.toUpperCase();
+  elements.formatText.textContent = fallback ? `${label} (fallback)` : label;
   syncFloatingControls();
 }
 
@@ -406,7 +341,7 @@ async function openFloatingControls() {
   pip.document.body.innerHTML = `
     <main class="pip">
       <header>
-        <strong>Star Recorder</strong>
+        <strong>NovaCast</strong>
         <span id="pipState">Ready</span>
       </header>
       <div class="pipStats">
@@ -525,7 +460,20 @@ async function getDesktopStream(streamId) {
     };
   }
 
-  return navigator.mediaDevices.getUserMedia(constraints);
+  try {
+    return await navigator.mediaDevices.getUserMedia(constraints);
+  } catch (error) {
+    if (error.name === "NotAllowedError") {
+      throw new Error("Permission denied. Allow screen recording in Chrome and try again.");
+    }
+    if (error.name === "NotFoundError") {
+      throw new Error("Selected source is no longer available. Choose another source.");
+    }
+    if (error.name === "OverconstrainedError") {
+      throw new Error("Source does not support the requested resolution or frame rate. Reset settings and try again.");
+    }
+    throw new Error(`Failed to start capture: ${error.message}`);
+  }
 }
 
 async function useSelectedSource(streamId) {
@@ -585,7 +533,7 @@ async function startRecording() {
   elements.durationText.textContent = "00:00";
   elements.sizeText.textContent = "0 MB";
 
-  const settings = await getStoredSettings();
+  const settings = await StarRecorder.getStoredSettings();
   let recording;
   try {
     recording = createMediaRecorder(state.stream, settings);
@@ -608,8 +556,17 @@ async function startRecording() {
   });
 
   state.recorder.addEventListener("stop", finishRecording, { once: true });
+
+  state.recorder.addEventListener("error", (event) => {
+    setStatus(`Recording error: ${event.message || "Unknown MediaRecorder error"}`);
+    clearTimer();
+    updateControls();
+  });
+
   state.recorder.start(1000);
   state.timerId = window.setInterval(updateRecordingStats, 250);
+
+  updateFormatLabel(state.recordingFormat, state.recordingFallback);
 
   if (state.recordingFallback) {
     setStatus("MP4 is not supported by this Chrome build, so recording fell back to WebM.");
@@ -619,6 +576,27 @@ async function startRecording() {
     setStatus(`Recording ${state.recordingFormat.toUpperCase()} video...`);
   }
   updateControls();
+}
+
+function createMediaRecorder(stream, settings) {
+  const recordingFormat = StarRecorder.getRecordingFormat(settings);
+  const options = recordingFormat.mimeType ? { mimeType: recordingFormat.mimeType } : undefined;
+
+  try {
+    return {
+      recorder: new MediaRecorder(stream, options),
+      format: recordingFormat
+    };
+  } catch (error) {
+    const webmMimeType = StarRecorder.getWebmMimeType();
+    if (recordingFormat.extension === StarRecorder.FORMAT.MP4 && webmMimeType) {
+      return {
+        recorder: new MediaRecorder(stream, { mimeType: webmMimeType }),
+        format: { mimeType: webmMimeType, extension: StarRecorder.FORMAT.WEBM, fallback: true }
+      };
+    }
+    throw error;
+  }
 }
 
 function togglePauseRecording() {
@@ -676,9 +654,8 @@ function finishRecording() {
   }
 
   const mimeType = recorder.mimeType || "video/webm";
-  const blob = new Blob(state.chunks, { type: mimeType });
   const extension = mimeType.includes("mp4") ? "mp4" : "webm";
-  state.videoUrl = URL.createObjectURL(blob);
+  state.videoUrl = URL.createObjectURL(new Blob(state.chunks, { type: mimeType }));
   elements.downloadLink.href = state.videoUrl;
   elements.downloadLink.download = `star-recording-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`;
   elements.downloadLink.classList.remove("is-hidden");

@@ -1,14 +1,14 @@
-# Star Recorder
+# NovaCast
 
-Star Recorder is a simple Chrome extension for recording a tab, window, or screen as a video.
+NovaCast is a Chrome extension for recording a tab, window, or screen as a video.
 
 ## How to use
 
 1. Open `chrome://extensions`.
 2. Enable `Developer mode`.
 3. Click `Load unpacked`.
-4. Select the extracted or cloned `Star-Recorder` project folder.
-5. Click the `Star Recorder` extension icon.
+4. Select the extracted or cloned project folder.
+5. Click the `NovaCast` extension icon.
 6. The recorder panel opens in a small popup window.
 7. Click `Choose Source`.
 8. Pick the tab, window, or screen you want to record.
@@ -17,7 +17,7 @@ Star Recorder is a simple Chrome extension for recording a tab, window, or scree
 
 ## Options
 
-Open the extension options page to choose the output format. `MP4 for social upload` is best for X and most social platforms, but Chrome support depends on the installed browser build. If MP4 recording is unavailable, Star Recorder falls back to WebM.
+Open the extension options page to choose the output format. `MP4 for social upload` is best for X and most social platforms, but Chrome support depends on the installed browser build. If MP4 recording is unavailable, NovaCast falls back to WebM.
 
 ## Output
 
