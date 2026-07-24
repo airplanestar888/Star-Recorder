@@ -2,32 +2,69 @@
   color-scheme: light dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
   --ink: #0f172a;
   --muted: #64748b;
+  --muted-light: #94a3b8;
   --line: #e2e8f0;
-  --surface: #ffffff;
   --field: #f1f5f9;
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-active: #4338ca;
+  --accent-glow: rgba(99, 102, 241, 0.25);
   --accent-soft: #e0e7ff;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   --blue: #2563eb;
-  --info-bg: #eff6ff;
-  --info-border: #dbeafe;
+  --blue-soft: #dbeafe;
+  --red: #ef4444;
+  --red-hover: #dc2626;
+  --red-soft: #fee2e2;
+  --amber: #f59e0b;
+  --amber-soft: #fef3c7;
+  --emerald: #10b981;
+  --emerald-soft: #d1fae5;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface-elevated: #1a2236;
     --ink: #f1f5f9;
     --muted: #94a3b8;
-    --line: #334155;
-    --surface: #1e293b;
-    --field: #27354f;
-    --accent: #6366f1;
-    --accent-hover: #818cf8;
-    --accent-soft: #312e81;
-    --blue: #3b82f6;
-    --info-bg: #172554;
-    --info-border: #1e3a8a;
+    --muted-light: #64748b;
+    --line: #1e293b;
+    --field: #1e293b;
+    --accent: #818cf8;
+    --accent-hover: #6366f1;
+    --accent-active: #4f46e5;
+    --accent-glow: rgba(129, 140, 248, 0.3);
+    --accent-soft: #1e1b4b;
+    --accent-gradient: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+    --blue: #60a5fa;
+    --blue-soft: #1e3a5f;
+    --red: #f87171;
+    --red-hover: #ef4444;
+    --red-soft: #450a0a;
+    --amber: #fbbf24;
+    --amber-soft: #451a03;
+    --emerald: #34d399;
+    --emerald-soft: #064e3b;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -39,14 +76,16 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--ink);
-  background: var(--field);
+  background: linear-gradient(180deg, var(--bg) 0%, var(--field) 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .optionsApp {
   display: grid;
   place-items: start center;
   min-height: 100vh;
-  padding: 28px 16px;
+  padding: 32px 16px;
 }
 
 .settingsCard {
@@ -54,10 +93,15 @@ body {
   gap: 20px;
   width: min(720px, 100%);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 22px;
+  border-radius: var(--radius-xl);
+  padding: 24px;
   background: var(--surface);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg);
+  transition: box-shadow var(--transition);
+}
+
+.settingsCard:hover {
+  box-shadow: var(--shadow-xl);
 }
 
 header {
@@ -67,14 +111,48 @@ header {
   gap: 18px;
 }
 
+header .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+header .brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+header .brand-text h1 {
+  font-size: 20px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+header .brand-text p {
+  font-size: 12px;
+  margin-top: 1px;
+}
+
 h1,
 p {
   margin: 0;
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 p,
@@ -88,11 +166,17 @@ span {
   align-items: center;
   min-height: 28px;
   border-radius: 999px;
-  padding: 0 10px;
+  padding: 0 12px;
   color: var(--accent-hover);
   background: var(--accent-soft);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: all var(--transition);
+}
+
+#saveState:empty {
+  display: none;
 }
 
 fieldset {
@@ -104,47 +188,63 @@ fieldset {
 }
 
 legend {
-  margin-bottom: 2px;
-  font-size: 14px;
-  font-weight: 850;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
 }
 
 .formatOption {
   display: grid;
-  grid-template-columns: 18px 1fr;
-  gap: 12px;
+  grid-template-columns: 20px 1fr;
+  gap: 14px;
   align-items: start;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px;
+  border-radius: var(--radius-md);
+  padding: 16px;
   background: var(--field);
   cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.formatOption:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  transform: translateY(-1px);
 }
 
 .formatOption:has(input:checked) {
   border-color: var(--accent);
   background: var(--accent-soft);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
-input {
-  width: 18px;
-  height: 18px;
-  margin: 2px 0 0;
+.formatOption input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin: 3px 0 0;
   accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .formatOption span {
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
-strong {
+.formatOption strong {
   color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
 }
 
-small {
-  font-size: 13px;
-  line-height: 1.45;
+.formatOption small {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
 }
 
 .supportBox {
@@ -155,16 +255,31 @@ small {
 
 .supportBox div {
   display: grid;
-  gap: 5px;
-  border: 1px solid var(--info-border);
-  border-radius: 8px;
-  padding: 12px;
-  background: var(--info-bg);
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  background: var(--field);
+  transition: all var(--transition);
 }
 
-.supportBox span {
-  font-size: 12px;
-  font-weight: 800;
+.supportBox div:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.supportBox > div > span {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.supportBox > div > strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 @media (max-width: 560px) {
@@ -174,6 +289,7 @@ small {
   }
 
   header {
-    display: grid;
+    display: flex;
+    flex-direction: column;
   }
 }
