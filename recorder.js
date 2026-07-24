@@ -352,9 +352,9 @@ async function openFloatingControls() {
       <div class="pipBar"><div id="pipPulse"></div></div>
       <nav>
         <button id="pipStart" type="button">Start</button>
-        <button id="pipPause" class="warning" type="button" disabled>Pause</button>
-        <button id="pipStop" class="danger" type="button" disabled>Stop</button>
-        <button id="pipDownload" class="download is-hidden" type="button">Download</button>
+        <button id="pipPause" class="pip-warning" type="button" disabled>Pause</button>
+        <button id="pipStop" class="pip-danger" type="button" disabled>Stop</button>
+        <button id="pipDownload" class="pip-download is-hidden" type="button">Download</button>
       </nav>
     </main>
   `;
@@ -364,39 +364,37 @@ async function openFloatingControls() {
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; }
     body {
-      color: #111827;
-      background: #f8fafc;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #000000;
+      background: #f2f2f7;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    .pip { display: grid; gap: 12px; padding: 14px; }
-    header, .pipStats, nav { display: flex; align-items: center; gap: 8px; }
-    header, .pipStats { justify-content: space-between; }
-    strong { font-size: 14px; }
-    span { color: #5d6675; font-size: 12px; font-weight: 700; }
-    .pipStats span { color: #111827; font-size: 20px; font-weight: 850; }
-    p { min-height: 34px; margin: 0; color: #334155; font-size: 12px; line-height: 1.4; }
-    .pipBar { overflow: hidden; height: 7px; border-radius: 999px; background: #dce3ec; }
-    #pipPulse { width: 0%; height: 100%; border-radius: inherit; background: #b47805; }
-    #pipPulse.is-recording { width: 100%; animation: pulse 1.2s ease-in-out infinite; }
-    #pipPulse.is-paused { width: 100%; background: #94a3b8; }
-    nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pip { display: grid; gap: 10px; padding: 14px; }
+    header { display: flex; align-items: center; justify-content: space-between; }
+    strong { font-size: 13px; font-weight: 600; }
+    span { color: #8e8e93; font-size: 11px; font-weight: 500; }
+    p { min-height: 28px; margin: 0; color: #000000; font-size: 12px; line-height: 1.4; }
+    .pipBar { overflow: hidden; height: 4px; border-radius: 999px; background: #e5e5ea; }
+    #pipPulse { width: 0%; height: 100%; border-radius: inherit; background: #007aff; }
+    #pipPulse.is-recording { width: 100%; animation: pulse 1.4s ease-in-out infinite; }
+    #pipPulse.is-paused { width: 100%; background: #8e8e93; animation: none; }
+    nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
     button {
-      min-height: 38px;
-      border: 0;
-      border-radius: 8px;
+      min-height: 34px;
+      border: none;
+      border-radius: 10px;
       color: #ffffff;
-      background: #126a5c;
+      background: #007aff;
       font: inherit;
-      font-size: 12px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 500;
       cursor: pointer;
     }
-    button:disabled { cursor: not-allowed; opacity: 0.55; }
-    .warning { color: #17202a; background: #f0c25a; }
-    .danger { background: #b42318; }
-    .download { background: #2f5f9e; }
+    button:disabled { cursor: not-allowed; opacity: 0.4; }
+    .pip-warning { color: #000000; background: #ff9500; }
+    .pip-danger { background: #ff3b30; }
+    .pip-download { background: #007aff; }
     .is-hidden { display: none !important; }
-    @keyframes pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
   `;
   pip.document.head.append(style);
 

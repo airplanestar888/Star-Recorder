@@ -9,48 +9,72 @@
   <body>
     <main class="app">
       <header class="topbar">
-        <div class="brand">
-          <div class="brand-icon">N</div>
-          <div class="brand-text">
-            <h1>NovaCast</h1>
-            <p id="statusText">Choose a capture source to start.</p>
+        <div class="topbar-inner">
+          <div class="brand">
+            <div class="brand-icon">N</div>
+            <div class="brand-text">
+              <h1>NovaCast</h1>
+              <p id="statusText">Choose a capture source to start.</p>
+            </div>
           </div>
-        </div>
-        <div class="actions">
-          <button id="optionsButton" class="secondary compact" type="button">Options</button>
-          <button id="sourceButton" type="button">Choose Source</button>
+          <div class="actions">
+            <button id="optionsButton" class="btn btn-secondary btn-compact" type="button">Options</button>
+            <button id="sourceButton" class="btn btn-primary btn-sm" type="button">Choose Source</button>
+          </div>
         </div>
       </header>
 
       <section class="workspace" aria-label="Recorder">
         <aside class="panel settingsPanel">
-          <h2>Settings</h2>
-          <label>
-            Max FPS
-            <input id="fpsInput" type="number" min="5" max="60" value="30">
-          </label>
-          <label>
-            Max width
-            <input id="widthInput" type="number" min="640" max="3840" step="10" value="1920">
-          </label>
-          <label>
-            Max height
-            <input id="heightInput" type="number" min="360" max="2160" step="10" value="1080">
-          </label>
-          <label class="checkLabel">
-            <input id="audioInput" type="checkbox" checked>
-            Record audio when available
-          </label>
-          <p id="audioHint" class="hintText">
-            For X Spaces, choose the Chrome Tab source and enable tab audio in the share dialog.
-          </p>
-          <button id="resetButton" class="secondary" type="button" disabled>Reset</button>
+          <div class="panel-header">
+            <h2>Settings</h2>
+          </div>
+          <div class="panel-body">
+            <div class="settings-group">
+              <div class="settings-row">
+                <span class="settings-row-label">Max FPS</span>
+                <input id="fpsInput" type="number" min="5" max="60" value="30" style="width: 80px;">
+              </div>
+              <div class="settings-row">
+                <span class="settings-row-label">Max width</span>
+                <input id="widthInput" type="number" min="640" max="3840" step="10" value="1920" style="width: 80px;">
+              </div>
+              <div class="settings-row">
+                <span class="settings-row-label">Max height</span>
+                <input id="heightInput" type="number" min="360" max="2160" step="10" value="1080" style="width: 80px;">
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <div class="settings-row">
+                <span class="settings-row-label">Record audio</span>
+                <label class="toggle">
+                  <input id="audioInput" type="checkbox" checked>
+                  <span class="toggle-track"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <p id="audioHint" class="hintText">
+                For X Spaces, choose the Chrome Tab source and enable tab audio in the share dialog.
+              </p>
+              <button id="resetButton" class="btn btn-secondary" type="button" disabled>Reset</button>
+            </div>
+          </div>
         </aside>
 
         <section class="stageWrap">
           <div id="previewShell" class="previewShell">
             <video id="previewVideo" autoplay muted playsinline></video>
             <div id="emptyState" class="emptyState">
+              <div class="emptyIcon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </div>
               <strong>No source selected</strong>
               <span>Click Choose Source, then pick the tab or window you want to record.</span>
             </div>
@@ -59,45 +83,47 @@
             <div id="recordingPulse" class="recordingPulse"></div>
           </div>
           <nav id="transportControls" class="transportControls is-hidden" aria-label="Recording controls">
-            <button id="recordButton" type="button" disabled>Start</button>
-            <button id="pauseButton" class="warning" type="button" disabled>Pause</button>
-            <button id="stopButton" class="danger" type="button" disabled>Stop</button>
-            <button id="floatingButton" class="secondary compact" type="button" disabled>Pop Out Panel</button>
-            <a id="downloadLink" class="downloadLink is-hidden" download="star-recording.webm">Download</a>
+            <button id="recordButton" class="btn btn-primary btn-sm" type="button" disabled>Start</button>
+            <button id="pauseButton" class="btn btn-secondary btn-sm" type="button" disabled>Pause</button>
+            <button id="stopButton" class="btn btn-danger btn-sm" type="button" disabled>Stop</button>
+            <button id="floatingButton" class="btn btn-secondary btn-sm" type="button" disabled>Pop Out</button>
+            <a id="downloadLink" class="btn btn-primary btn-sm is-hidden" download="star-recording.webm">Download</a>
           </nav>
         </section>
 
         <aside class="panel infoPanel">
-          <div class="panelHeader">
+          <div class="panel-header">
             <h2>Recording</h2>
             <span id="recordingState">Ready</span>
           </div>
-          <dl class="statsList">
-            <div>
-              <dt>Duration</dt>
-              <dd id="durationText">00:00</dd>
-            </div>
-            <div>
-              <dt>File size</dt>
-              <dd id="sizeText">0 MB</dd>
-            </div>
-            <div>
-              <dt>Stream resolution</dt>
-              <dd id="resolutionText">-</dd>
-            </div>
-            <div>
-              <dt>Audio</dt>
-              <dd id="audioText">Off</dd>
-            </div>
-            <div>
-              <dt>Audio track</dt>
-              <dd id="audioTrackText">Not selected</dd>
-            </div>
-            <div>
-              <dt>Output format</dt>
-              <dd id="formatText">-</dd>
-            </div>
-          </dl>
+          <div class="panel-body">
+            <dl class="statsList">
+              <div>
+                <dt>Duration</dt>
+                <dd id="durationText">00:00</dd>
+              </div>
+              <div>
+                <dt>File size</dt>
+                <dd id="sizeText">0 MB</dd>
+              </div>
+              <div>
+                <dt>Stream resolution</dt>
+                <dd id="resolutionText">-</dd>
+              </div>
+              <div>
+                <dt>Audio</dt>
+                <dd id="audioText">Off</dd>
+              </div>
+              <div>
+                <dt>Audio track</dt>
+                <dd id="audioTrackText">Not selected</dd>
+              </div>
+              <div>
+                <dt>Output format</dt>
+                <dd id="formatText">-</dd>
+              </div>
+            </dl>
+          </div>
         </aside>
       </section>
 
@@ -120,13 +146,13 @@
           </div>
         </div>
         <div class="recordPanelActions">
-          <button id="panelSource" type="button">Choose Source</button>
-          <button id="panelStart" type="button" disabled>Start</button>
-          <button id="panelPause" class="warning" type="button" disabled>Pause</button>
-          <button id="panelStop" class="danger" type="button" disabled>Stop</button>
-          <button id="panelOptions" class="secondary compact" type="button">Options</button>
-          <button id="panelPopout" class="secondary compact" type="button">Pop Out</button>
-          <button id="panelDownload" class="downloadButton is-hidden" type="button">Download</button>
+          <button id="panelSource" class="btn btn-secondary btn-sm" type="button">Choose Source</button>
+          <button id="panelStart" class="btn btn-primary btn-sm" type="button" disabled>Start</button>
+          <button id="panelPause" class="btn btn-secondary btn-sm" type="button" disabled>Pause</button>
+          <button id="panelStop" class="btn btn-danger btn-sm" type="button" disabled>Stop</button>
+          <button id="panelOptions" class="btn btn-secondary btn-sm" type="button">Options</button>
+          <button id="panelPopout" class="btn btn-secondary btn-sm" type="button">Pop Out</button>
+          <button id="panelDownload" class="btn btn-primary btn-sm is-hidden" type="button">Download</button>
         </div>
       </aside>
     </main>

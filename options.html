@@ -20,32 +20,36 @@
           <span id="saveState">Saved</span>
         </header>
 
-        <fieldset>
-          <legend>Output format</legend>
-          <label class="formatOption">
-            <input name="outputFormat" type="radio" value="mp4">
-            <span>
-              <strong>MP4 for social upload</strong>
-              <small>Best for X, Instagram, TikTok, and most editors. Falls back to WebM if Chrome cannot record MP4.</small>
-            </span>
-          </label>
-          <label class="formatOption">
-            <input name="outputFormat" type="radio" value="webm">
-            <span>
-              <strong>WebM stable recording</strong>
-              <small>Most reliable in Chrome, but some social platforms reject it.</small>
-            </span>
-          </label>
-        </fieldset>
+        <div class="settings-body">
+          <fieldset>
+            <legend>Output format</legend>
 
-        <div class="supportBox">
-          <div>
-            <span>MP4 support</span>
-            <strong id="mp4Support">Checking...</strong>
-          </div>
-          <div>
-            <span>WebM support</span>
-            <strong id="webmSupport">Checking...</strong>
+            <label class="formatOption">
+              <input name="outputFormat" type="radio" value="mp4">
+              <span class="option-content">
+                <strong>MP4 for social upload</strong>
+                <small>Best for X, Instagram, TikTok, and most editors. Falls back to WebM if Chrome cannot record MP4.</small>
+              </span>
+            </label>
+
+            <label class="formatOption">
+              <input name="outputFormat" type="radio" value="webm">
+              <span class="option-content">
+                <strong>WebM stable recording</strong>
+                <small>Most reliable in Chrome, but some social platforms reject it.</small>
+              </span>
+            </label>
+          </fieldset>
+
+          <div class="supportBox">
+            <div>
+              <span>MP4 support</span>
+              <strong id="mp4Support">Checking...</strong>
+            </div>
+            <div>
+              <span>WebM support</span>
+              <strong id="webmSupport">Checking...</strong>
+            </div>
           </div>
         </div>
       </section>
